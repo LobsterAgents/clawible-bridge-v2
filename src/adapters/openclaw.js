@@ -44,6 +44,13 @@ export class OpenClawAdapter extends BaseAdapter {
         message += `Working Directory: ${projectPath}\n\n`;
       }
       
+      // Add model override instruction if specified
+      // Since openclaw agent CLI doesn't have --model flag, we embed it as context
+      // The spawned agent can use session_status(model="...") to switch
+      if (model) {
+        message += `[CLAWIBLE CONFIG]\nPreferred Model: ${model}\nNote: If you need to use this specific model, call session_status with model="${model}" at the start of your turn.\n\n`;
+      }
+      
       // Add the actual task
       message += `Task:\n${task}`;
       
@@ -63,10 +70,9 @@ export class OpenClawAdapter extends BaseAdapter {
         args.push('--agent', agentId);
       }
       
-      // Add model override if specified
-      if (model) {
-        args.push('--model', model);
-      }
+      // Note: openclaw agent CLI doesn't have a --model flag
+      // Model override is embedded in message context above
+      // The agent can use /model command or session_status to switch if needed
       
       onStatus?.(`Running agent: ${agentId || 'main'}`);
       

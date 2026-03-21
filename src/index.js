@@ -26,7 +26,7 @@ const taskManager = new TaskManager();
 // Mount routes
 app.use('/', createRoutes(taskManager));
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🦞 Clawible Bridge v2 running on http://localhost:${PORT}`);
   console.log(`   Architecture: BYOA (Bring Your Own Agent)`);
   console.log(`   Available adapters: ${taskManager.listAdapters().join(', ')}`);
