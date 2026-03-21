@@ -14,6 +14,7 @@ import { ClaudeCodeAdapter } from './adapters/claude-code.js';
 import { CodexAdapter } from './adapters/codex.js';
 import { OllamaAdapter } from './adapters/ollama.js';
 import { RawAPIAdapter } from './adapters/raw-api.js';
+import { GeminiAdapter } from './adapters/gemini.js';
 
 export class TaskManager {
   constructor() {
@@ -27,6 +28,7 @@ export class TaskManager {
       ['codex', new CodexAdapter()],
       ['ollama', new OllamaAdapter()],
       ['raw-api', new RawAPIAdapter()],
+      ['gemini', new GeminiAdapter()],
     ]);
     
     // Clean up old tasks periodically (keep last hour)
