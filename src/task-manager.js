@@ -17,9 +17,12 @@ import { RawAPIAdapter } from './adapters/raw-api.js';
 import { GeminiAdapter } from './adapters/gemini.js';
 
 export class TaskManager {
-  constructor() {
+  constructor(wsServer = null) {
     // Task storage - in production, use Redis or SQLite
     this.tasks = new Map();
+    
+    // WebSocket server for real-time updates
+    this.wsServer = wsServer;
     
     // Initialize adapters
     this.adapters = new Map([
@@ -125,6 +128,11 @@ export class TaskManager {
         message: 'Task completed successfully'
       });
       
+      // Broadcast completion via WebSocket
+      if (this.wsServer) {
+        this.wsServer.broadcastTaskComplete(id, result);
+      }
+      
     } catch (err) {
       task.error = err.message;
       task.status = 'failed';
@@ -134,6 +142,11 @@ export class TaskManager {
         timestamp: task.completedAt,
         message: `Failed: ${err.message}`
       });
+      
+      // Broadcast failure via WebSocket
+      if (this.wsServer) {
+        this.wsServer.broadcastTaskFailed(id, err.message);
+      }
     }
   }
   
@@ -149,6 +162,11 @@ export class TaskManager {
     });
     
     console.log(`[${id}] ${message}`);
+    
+    // Broadcast status update via WebSocket
+    if (this.wsServer) {
+      this.wsServer.broadcastStatusUpdate(id, message);
+    }
   }
   
   getTask(id) {
